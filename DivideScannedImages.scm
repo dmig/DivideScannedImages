@@ -269,8 +269,8 @@
                     SF-TOGGLE     "Save output to source directory"     TRUE
                     SF-DIRNAME    "Target directory (if not to source)" ""
                     SF-OPTION     "Save File Type"                      (list  "jpg" "png" "tiff")
-                    SF-ADJUSTMENT "Save DPI"                      		  (list 100 0 2000 10 600 1 SF-SLIDER)
-                    SF-ADJUSTMENT "JPG Quality"                         (list 0.8 0.1 1.0 1 10 1 SF-SLIDER)
+                    SF-ADJUSTMENT "Save DPI"                            (list 100 0 2000 10 600 1 SF-SLIDER)
+                    SF-ADJUSTMENT "JPG Quality"                         (list 0.8 0.1 1.0 0.05 0.2 2 SF-SLIDER)
                     SF-STRING     "Save File Base Name"                 "Crop"
                     SF-ADJUSTMENT "Save File Start Number"              (list 1 0 9000 1 100 0 SF-SPINNER)                  
 )
@@ -370,8 +370,8 @@
                     SF-TOGGLE     "Save output to source directory"     TRUE
                     SF-DIRNAME    "Target directory (if not to source)" ""
                     SF-OPTION     "Save File Type"                      (list "jpg" "png" "tiff")
-                    SF-ADJUSTMENT "Save DPI"                      		  (list 600 0 2000 10 100 1 SF-SLIDER)
-                    SF-ADJUSTMENT "JPG Quality"                         (list 0.8 0.1 1.0 1 10 1 SF-SLIDER)
+                    SF-ADJUSTMENT "Save DPI"                            (list 600 0 2000 10 100 1 SF-SLIDER)
+                    SF-ADJUSTMENT "JPG Quality"                         (list 0.8 0.1 1.0 0.05 0.2 2 SF-SLIDER)
                     SF-STRING     "Save File Base Name"                 "Crop"
                     SF-ADJUSTMENT "Save File Start Number"              (list 1 0 9000 1 100 0 SF-SPINNER)       
 )
