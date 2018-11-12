@@ -20,7 +20,7 @@
 ; The GNU Public License is available at
 ; http://www.gnu.org/copyleft/gpl.html
 
-(define (script_fu_DivideScannedImages img inLayer inSquareCrop inPadding inLimit inDeskew inAutoClose inThreshold inSize inDefBg inBgCol inCorner inX inY inSaveInSourceDir inDir inSaveType inJpgQual inFileName inFileNumber)
+(define (script_fu_DivideScannedImages img inLayer inSquareCrop inPadding inLimit inDeskew inAutoClose inThreshold inSize inDefBg inBgCol inCorner inX inY inSaveInSourceDir inDir inSaveType inSaveDpi inJpgQual inFileName inFileNumber)
   (let*
     (
       (inSaveFiles TRUE)
@@ -208,7 +208,7 @@
             (set! newFileName (string-append targetDir pathchar gimp-image-get-filename inFileName 
                                      (substring "00000" (string-length (number->string (+ inFileNumber numextracted))))
                                      (number->string (+ inFileNumber numextracted)) saveString))
-            (gimp-image-set-resolution tempImage 600 600)  ; The DPI
+            (gimp-image-set-resolution tempImage inSaveDpi inSaveDpi)  ; The DPI
             (if (equal? saveString ".jpg") 
             (file-jpeg-save RUN-NONINTERACTIVE tempImage tempLayer newFileName newFileName inJpgQual 0.1 1 0 "Custom JPG compression by FrancoisM" 0 1 0 1)
             (gimp-file-save RUN-NONINTERACTIVE tempImage tempLayer newFileName newFileName)
@@ -268,11 +268,12 @@
                     SF-TOGGLE     "Save output to source directory"     TRUE
                     SF-DIRNAME    "Target directory (if not to source)" ""
                     SF-OPTION     "Save File Type"                      (list  "jpg" "png")
+                    SF-ADJUSTMENT "Save DPI"                      		  (list 100 0 2000 10 600 1 SF-SLIDER)
                     SF-ADJUSTMENT "JPG Quality"                         (list 0.8 0.1 1.0 1 10 1 SF-SLIDER)
                     SF-STRING     "Save File Base Name"                 "Crop"
                     SF-ADJUSTMENT "Save File Start Number"              (list 1 0 9000 1 100 0 SF-SPINNER)                  
 )
-(define (script_fu_BatchDivideScannedImages inSourceDir inLoadType inSquareCrop inPadding inLimit inDeskew inAutoClose inThreshold inSize inDefBg inBgCol inCorner inX inY inSaveInSourceDir inDestDir inSaveType inJpgQual inFileName inFileNumber)
+(define (script_fu_BatchDivideScannedImages inSourceDir inLoadType inSquareCrop inPadding inLimit inDeskew inAutoClose inThreshold inSize inDefBg inBgCol inCorner inX inY inSaveInSourceDir inDestDir inSaveType inSaveDpi inJpgQual inFileName inFileNumber)
 (let*
     (
       (varLoadStr "")
@@ -334,7 +335,7 @@
         (gimp-drawable-set-name drawable "1919191919")
         (gimp-progress-set-text (string-append "Working on ->" filename))
       
-        (script_fu_DivideScannedImages image drawable inSquareCrop inPadding inLimit inDeskew inAutoClose inThreshold inSize inDefBg inBgCol inCorner inX inY inSaveInSourceDir inDestDir inSaveType inJpgQual inFileName varCounter)
+        (script_fu_DivideScannedImages image drawable inSquareCrop inPadding inLimit inDeskew inAutoClose inThreshold inSize inDefBg inBgCol inCorner inX inY inSaveInSourceDir inDestDir inSaveType inSaveDpi inJpgQual inFileName varCounter)
  
         ;increment by number extracted.
         (set! varCounter (+ varCounter (- (string->number (car (gimp-drawable-get-name drawable))) 1919191919)))
@@ -368,6 +369,7 @@
                     SF-TOGGLE     "Save output to source directory"     TRUE
                     SF-DIRNAME    "Target directory (if not to source)" ""
                     SF-OPTION     "Save File Type"                      (list "jpg" "png")
+                    SF-ADJUSTMENT "Save DPI"                      		  (list 600 0 2000 10 100 1 SF-SLIDER)
                     SF-ADJUSTMENT "JPG Quality"                         (list 0.8 0.1 1.0 1 10 1 SF-SLIDER)
                     SF-STRING     "Save File Base Name"                 "Crop"
                     SF-ADJUSTMENT "Save File Start Number"              (list 1 0 9000 1 100 0 SF-SPINNER)       
