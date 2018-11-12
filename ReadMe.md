@@ -1,3 +1,7 @@
+# Disclaimer
+
+I fixed this script to make it run in GIMP 2.10, but since it's language Scheme is poorly documented and hard to debug, I'm not going to support this. I plan to rewrite this script into python, to make it easier to maintain.
+
 # DivideScannedImages 
 
 * is a plugin for [GIMP](http://en.wikipedia.org/wiki/GIMP).
