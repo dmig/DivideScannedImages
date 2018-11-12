@@ -10,7 +10,7 @@
 ; This program is free software; you can redistribute it and/or modify
 ; it under the terms of the GNU General Public License as published by
 ; the Free Software Foundation; either version 2 of the License, or
-; (at your option) any later version. 
+; (at your option) any later version.
 ;
 ; This program is distributed in the hope that it will be useful,
 ; but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -51,28 +51,28 @@
     (gimp-context-push)
     (set! imgpath (car (gimp-image-get-filename img)))
     (gimp-image-undo-disable img)
-    
+
     ;logging
     ;(gimp-message-set-handler ERROR-CONSOLE)
     ;(gimp-message-set-handler CONSOLE)
     ;(gimp-message-set-handler MESSAGE-BOX)
     ;or start GIMP wwith "gimp --console-messages" to spawn a console box
     ;then use this:
-    ;(gimp-message "foobar") 
-    
+    ;(gimp-message "foobar")
+
     ;testing for functions defined
     ;(if (defined? 'plug-in-shift) (gimp-message "It Exists") (gimp-message "Doesnt Exist"))
-    
+
     ;set up saving
     (if (= inSaveFiles TRUE)
       (set! saveString
-      (cond 
+      (cond
         (( equal? inSaveType 0 ) ".jpg" )
         (( equal? inSaveType 1 ) ".png" )
         (( equal? inSaveType 2 ) ".tiff" )
       )
     ))
-    
+
     ; The block below was included in the original "DivideScannedImages.scm", but seems to cause problems by adding a white border which is then subsequently sampled.
     ; Expand the image a bit to fix problem with images near the right edge. Probably could get away just expanding
     ; width but go ahead and expand height in case same issue is there...
@@ -80,7 +80,7 @@
     ;(set! height (+ height 30))
     ;(gimp-image-resize img width height 15 15)
     ;(gimp-layer-resize-to-image-size inLayer)
-        
+
     ; If the background wasn't manually defined, pick the colour from one of the four corners (using radius 3 average)
     (if (not (= inDefBg TRUE))
     (begin
@@ -92,7 +92,7 @@
         (set! inBgCol (car (gimp-image-pick-color img inLayer (- width inX) inY TRUE TRUE 5)))
       )
       ( (equal? inCorner 2)
-        (set! inBgCol (car (gimp-image-pick-color img inLayer inX (- height inY) TRUE TRUE 5))) 
+        (set! inBgCol (car (gimp-image-pick-color img inLayer inX (- height inY) TRUE TRUE 5)))
       )
       ( (equal? inCorner 3)
         (set! inBgCol (car (gimp-image-pick-color img inLayer (- width inX) (- height inY) TRUE TRUE 5)))
@@ -100,19 +100,19 @@
     ))
     (gimp-image-select-color img CHANNEL-OP-REPLACE inLayer inBgCol)
     (gimp-context-set-background inBgCol)
-  
+
     ; convert inverted copy of the background selection to a path
     (gimp-selection-feather img (/ (min width height) 100))
     (gimp-selection-sharpen img)
     (gimp-selection-invert img)
     (plug-in-sel2path RUN-NONINTERACTIVE img inLayer)
-    
+
     ;break up the vectors and loop across each vector (boundary path of each object)
-    (set! newpath (vector-ref (cadr (gimp-image-get-vectors img)) 0)) 
-   
+    (set! newpath (vector-ref (cadr (gimp-image-get-vectors img)) 0))
+
     (set! strokes (gimp-vectors-get-strokes newpath))
     (while (and (< count (car strokes)) (< numextracted inLimit))
-    
+
       (set! tempVector (gimp-vectors-new img "Temp"))
       (gimp-image-add-vectors img (car tempVector) -1)
       (gimp-vectors-stroke-new-from-points (car tempVector)
@@ -122,7 +122,7 @@
         (list-ref (gimp-vectors-stroke-get-points newpath (vector-ref (cadr strokes) count)) 3)
       )
       (gimp-vectors-to-selection (car tempVector) CHANNEL-OP-REPLACE TRUE FALSE 0 0)
-      
+
       ;check for minimum size
       (set! bounds (gimp-selection-bounds img))
       (set! sizex (- (list-ref bounds 3) (list-ref bounds 1)))
@@ -137,14 +137,14 @@
                                 sizex sizey CHANNEL-OP-REPLACE FALSE 0 )
           (set! buffname (car (gimp-edit-named-copy inLayer buffname)))
           (set! tempImage (car (gimp-edit-named-paste-as-new buffname)))
-          (set! tempLayer (car (gimp-image-get-active-layer tempImage))) 
+          (set! tempLayer (car (gimp-image-get-active-layer tempImage)))
           (gimp-image-undo-disable tempImage)
           ;(set! tempdisplay (car (gimp-display-new tempImage)))
           (gimp-layer-flatten tempLayer)
           (gimp-deskew-plugin 0 tempImage tempLayer 0 0 0 0 0)
           (gimp-image-resize-to-layers tempImage)
           (gimp-layer-flatten tempLayer)
-          (gimp-fuzzy-select tempLayer 0 0 inThreshold CHANNEL-OP-REPLACE TRUE FALSE 0 TRUE) 
+          (gimp-fuzzy-select tempLayer 0 0 inThreshold CHANNEL-OP-REPLACE TRUE FALSE 0 TRUE)
           (gimp-selection-invert tempImage)
           (set! bounds (gimp-selection-bounds tempImage))
           (set! sizex (- (list-ref bounds 3) (list-ref bounds 1)))
@@ -170,7 +170,7 @@
           )))
           (begin
           (set! tempImage img)
-          (set! tempLayer (car (gimp-image-get-active-layer tempImage))) 
+          (set! tempLayer (car (gimp-image-get-active-layer tempImage)))
           (gimp-image-undo-disable tempImage)
           (if (= inSquareCrop TRUE)
             (begin
@@ -186,7 +186,7 @@
           )
           (set! buffname (car (gimp-edit-named-copy inLayer buffname)))
           (set! tempImage (car (gimp-edit-named-paste-as-new buffname)))
-          (set! tempLayer (car (gimp-image-get-active-layer tempImage)))        
+          (set! tempLayer (car (gimp-image-get-active-layer tempImage)))
           )
         )
         (set! tempdisplay (car (gimp-display-new tempImage)))
@@ -197,7 +197,7 @@
           (set! tempLayer (car (gimp-image-get-active-layer tempImage)))
         ))
         (gimp-image-undo-enable tempImage)
-          
+
         ;save file
         (if (= inSaveFiles TRUE)
         (begin
@@ -205,12 +205,12 @@
             (if (= inSaveInSourceDir TRUE)
               (set! targetDir (unbreakupstr (butlast (strbreakup imgpath pathchar)) pathchar))
             )
-            
-            (set! newFileName (string-append targetDir pathchar gimp-image-get-filename inFileName 
+
+            (set! newFileName (string-append targetDir pathchar gimp-image-get-filename inFileName
                                      (substring "00000" (string-length (number->string (+ inFileNumber numextracted))))
                                      (number->string (+ inFileNumber numextracted)) saveString))
             (gimp-image-set-resolution tempImage inSaveDpi inSaveDpi)  ; The DPI
-            (if (equal? saveString ".jpg") 
+            (if (equal? saveString ".jpg")
             (file-jpeg-save RUN-NONINTERACTIVE tempImage tempLayer newFileName newFileName inJpgQual 0.1 1 0 "Custom JPG compression by FrancoisM" 0 1 0 1)
             (gimp-file-save RUN-NONINTERACTIVE tempImage tempLayer newFileName newFileName)
             )
@@ -221,10 +221,10 @@
             )
           )
         ))
-          
+
         (set! numextracted (+ numextracted 1))
         )
-      )     
+      )
       (gimp-image-remove-vectors img (car tempVector))
       (set! count (+ count 1))
     )
@@ -236,7 +236,7 @@
     ;delete temp path
     (gimp-image-remove-vectors img newpath)
     (gimp-selection-none img)
-    
+
     ;done
     (gimp-image-undo-enable img)
     (gimp-progress-end)
@@ -272,7 +272,7 @@
                     SF-ADJUSTMENT "Save DPI"                            (list 100 0 2000 10 600 1 SF-SLIDER)
                     SF-ADJUSTMENT "JPG Quality"                         (list 0.8 0.1 1.0 0.05 0.2 2 SF-SLIDER)
                     SF-STRING     "Save File Base Name"                 "Crop"
-                    SF-ADJUSTMENT "Save File Start Number"              (list 1 0 9000 1 100 0 SF-SPINNER)                  
+                    SF-ADJUSTMENT "Save File Start Number"              (list 1 0 9000 1 100 0 SF-SPINNER)
 )
 (define (script_fu_BatchDivideScannedImages inSourceDir inLoadType inSquareCrop inPadding inLimit inDeskew inAutoClose inThreshold inSize inDefBg inBgCol inCorner inX inY inSaveInSourceDir inDestDir inSaveType inSaveDpi inJpgQual inFileName inFileNumber)
 (let*
@@ -282,7 +282,7 @@
       (varCounter inFileNumber)
       (pathchar (if (equal? (substring gimp-dir 0 1) "/") "/" "\\"))
     )
-    
+
     (define split
       (lambda (ls)
         (letrec ((split-h (lambda (ls ls1 ls2)
@@ -292,7 +292,7 @@
                               (else (split-h (cddr ls)
                                       (cdr ls1) (cons (car ls1) ls2)))))))
           (split-h ls ls '()))))
-          
+
     (define merge
       (lambda (pred ls1 ls2)
         (cond
@@ -302,9 +302,9 @@
            (cons (car ls1) (merge pred (cdr ls1) ls2)))
           (else (cons (car ls2) (merge pred ls1 (cdr ls2)))))))
 
-    ;pred is the comparison, i.e. <= for an ascending numeric list, or 
-    ;string<=? for a case sensitive alphabetical sort, 
-    ;string-ci<=? for a case insensitive alphabetical sort, 
+    ;pred is the comparison, i.e. <= for an ascending numeric list, or
+    ;string<=? for a case sensitive alphabetical sort,
+    ;string-ci<=? for a case insensitive alphabetical sort,
     (define merge-sort
       (lambda (pred ls)
         (cond
@@ -317,14 +317,14 @@
 
     ;begin here
     (set! varLoadStr
-    (cond 
+    (cond
     (( equal? inLoadType 0 ) ".[jJ][pP][gG]" )
     (( equal? inLoadType 1 ) ".[jJ][pP][eE][gG]" )
     (( equal? inLoadType 2 ) ".[bB][mM][pP]" )
     (( equal? inLoadType 3 ) ".[pP][nN][gG]" )
     (( equal? inLoadType 4 ) ".[tT][iI][fF]" )
     (( equal? inLoadType 5 ) ".[tT][iI][fF][fF]" )
-    ))  
+    ))
 
     (set! varFileList (merge-sort string<=? (cadr (file-glob (string-append inSourceDir pathchar "*" varLoadStr)  1))))
     (while (not (null? varFileList))
@@ -335,9 +335,9 @@
         ;flag for batch mode
         (gimp-drawable-set-name drawable "1919191919")
         (gimp-progress-set-text (string-append "Working on ->" filename))
-      
+
         (script_fu_DivideScannedImages image drawable inSquareCrop inPadding inLimit inDeskew inAutoClose inThreshold inSize inDefBg inBgCol inCorner inX inY inSaveInSourceDir inDestDir inSaveType inSaveDpi inJpgQual inFileName varCounter)
- 
+
         ;increment by number extracted.
         (set! varCounter (+ varCounter (- (string->number (car (gimp-drawable-get-name drawable))) 1919191919)))
         (gimp-image-delete image)
@@ -354,14 +354,14 @@
                     "Feb 2016"
                     ""
                     SF-DIRNAME    "Load from" ""
-                    SF-OPTION     "Load File Type" (list "jpg" "jpeg" "bmp" "png" "tif" "tiff") 
+                    SF-OPTION     "Load File Type" (list "jpg" "jpeg" "bmp" "png" "tif" "tiff")
                     SF-TOGGLE "Force square crop"                       FALSE
                     SF-ADJUSTMENT "Square border padding (pixels)"      (list 0 0 100 1 10 0 SF-SLIDER)
-                    SF-ADJUSTMENT "Max number of items"                 (list 10 1 100 1 10 0 SF-SLIDER)  
+                    SF-ADJUSTMENT "Max number of items"                 (list 10 1 100 1 10 0 SF-SLIDER)
                     SF-TOGGLE "Run Deskew"                              TRUE
                     SF-TOGGLE "Auto-close sub-images after saving"      TRUE
                     SF-ADJUSTMENT "Selection Threshold"                 (list 25 0 255 1 10 1 SF-SLIDER)
-                    SF-ADJUSTMENT "Size Threshold"                      (list 100 0 2000 10 100 1 SF-SLIDER)        
+                    SF-ADJUSTMENT "Size Threshold"                      (list 100 0 2000 10 100 1 SF-SLIDER)
                     SF-TOGGLE "Manually define background colour"       FALSE
                     SF-COLOR "Manual background colour"                 '(255 255 255)
                     SF-OPTION     "Auto-background sample corner"       (list "Top Left" "Top Right" "Bottom Left" "Bottom Right")
@@ -373,5 +373,5 @@
                     SF-ADJUSTMENT "Save DPI"                            (list 600 0 2000 10 100 1 SF-SLIDER)
                     SF-ADJUSTMENT "JPG Quality"                         (list 0.8 0.1 1.0 0.05 0.2 2 SF-SLIDER)
                     SF-STRING     "Save File Base Name"                 "Crop"
-                    SF-ADJUSTMENT "Save File Start Number"              (list 1 0 9000 1 100 0 SF-SPINNER)       
+                    SF-ADJUSTMENT "Save File Start Number"              (list 1 0 9000 1 100 0 SF-SPINNER)
 )
