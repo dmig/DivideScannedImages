@@ -45,13 +45,10 @@
       (tempdisplay 0)
       (buffname "dsibuff")
       (pathchar (if (equal? (substring gimp-dir 0 1) "/") "/" "\\"))
-      (imgpath "")
+      (imgpath (strbreakup (car (gimp-image-get-filename img)) pathchar))
+      (targetDir inDir)
+      (zeroPad (substring "00000" 0 (string-length (number->string (+ inLimit inFileNumber)))))
     )
-    ;  it begins here
-    (gimp-context-push)
-    (set! imgpath (car (gimp-image-get-filename img)))
-    (gimp-image-undo-disable img)
-
     ;logging
     ;(gimp-message-set-handler ERROR-CONSOLE)
     ;(gimp-message-set-handler CONSOLE)
@@ -62,6 +59,18 @@
 
     ;testing for functions defined
     ;(if (defined? 'plug-in-shift) (gimp-message "It Exists") (gimp-message "Doesnt Exist"))
+
+    (if (= inSaveInSourceDir TRUE)
+        (set! targetDir (unbreakupstr (butlast imgpath) pathchar))
+    )
+
+    (set! newFileName (string-append targetDir pathchar
+        (unbreakupstr (butlast (strbreakup (car (last imgpath)) ".")) ".")
+        "-" inFileName "-"))
+
+    ;  it begins here
+    (gimp-context-push)
+    (gimp-image-undo-disable img)
 
     ;set up saving
     (if (= inSaveFiles TRUE)
@@ -201,18 +210,17 @@
         ;save file
         (if (= inSaveFiles TRUE)
         (begin
-          (let* ((targetDir inDir))
-            (if (= inSaveInSourceDir TRUE)
-              (set! targetDir (unbreakupstr (butlast (strbreakup imgpath pathchar)) pathchar))
+          (let* (
+                (fileNum (number->string (+ inFileNumber numextracted)))
+                (filename (string-append newFileName
+                    (substring zeroPad (string-length fileNum))
+                    fileNum saveString))
             )
 
-            (set! newFileName (string-append targetDir pathchar gimp-image-get-filename inFileName
-                                     (substring "00000" (string-length (number->string (+ inFileNumber numextracted))))
-                                     (number->string (+ inFileNumber numextracted)) saveString))
             (gimp-image-set-resolution tempImage inSaveDpi inSaveDpi)  ; The DPI
             (if (equal? saveString ".jpg")
-            (file-jpeg-save RUN-NONINTERACTIVE tempImage tempLayer newFileName newFileName inJpgQual 0.1 1 0 "Custom JPG compression by FrancoisM" 0 1 0 1)
-            (gimp-file-save RUN-NONINTERACTIVE tempImage tempLayer newFileName newFileName)
+                (file-jpeg-save RUN-NONINTERACTIVE tempImage tempLayer filename filename inJpgQual 0.1 1 1 "Custom JPG compression by FrancoisM" 0 1 0 1)
+                (gimp-file-save RUN-NONINTERACTIVE tempImage tempLayer filename filename)
             )
             (if (= inAutoClose TRUE)
             (begin
