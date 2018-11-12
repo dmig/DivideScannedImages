@@ -246,7 +246,7 @@
 )
 
 (script-fu-register "script_fu_DivideScannedImages"
-                    "<Image>/Filters/Divide Scanned Images..."
+                    "<Image>/Tools/Divide Scanned Images..."
                     "Attempts to isolate images from a uniform background and saves a new square image for each"
                     "Francois Malan"
                     "Francois Malan"
@@ -347,7 +347,7 @@
   )
 )
 (script-fu-register "script_fu_BatchDivideScannedImages"
-                    "<Toolbox>/Xtns/Batch Tools/Batch Divide Scanned Images..."
+                    "<Toolbox>/Tools/Batch Divide Scanned Images..."
                     "Batch-divide a folder of full-page scans of images."
                     "Francois Malan"
                     "Francois Malan"
